@@ -205,8 +205,7 @@ main_one = function(cgene, bam_path, bamTotal, readLen, strandmode){
 #' @import S4Vectors
 #' @importFrom GenomicRanges GRanges disjoin
 #' @import Biostrings
-#' @import rbamtools
-#' @importFrom Rsamtools ScanBamParam
+#' @importFrom Rsamtools ScanBamParam countBam
 #' @importFrom GenomeInfoDb dropSeqlevels
 #' @importFrom igraph all_simple_paths graph_from_adjacency_matrix
 #' @import np
@@ -246,10 +245,14 @@ aide = function(gtf_path, bam_path, fasta_path, out_dir, readLen, strandmode = 0
     run_genes = run_genes[!is.na(run_genes)]
   }
 
-  reader = bamReader(bam_path, idx=TRUE)
-  count = bamCountAll(reader,verbose=TRUE)
-  bamClose(reader)
-  bamTotal = sum(count[, "nAligns"])
+  reader = countBam(bam_path)
+  bamTotal = reader$records
+  gc()
+
+  # reader = bamReader(bam_path, idx=TRUE)
+  # count = bamCountAll(reader,verbose=TRUE)
+  # bamClose(reader)
+  # bamTotal = sum(count[, "nAligns"])
 
   print("estimating fragment length ...")
   paras = get_fragment_length_dist(gene_models, rowID, num_thre = 100,
