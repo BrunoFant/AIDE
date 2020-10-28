@@ -184,7 +184,7 @@ main_one = function(cgene, bam_path, bamTotal, readLen, strandmode){
 #' @author Jingyi Jessica Li, \email{jli@stat.ucla.edu}
 aide = function(gtf_path, bam_path, fasta_path, out_dir, readLen, strandmode = 0, genes = NULL, pval = NULL, ncores = 5,
                 mode = "regular", ne = 25, gene_model_path = NULL, flag = 0){
-  options(np.messsages = FALSE)
+  options(np.messsages = FALSE
   set.seed(1)
 
   tp_dir = paste0(out_dir, "temporary/")
@@ -226,8 +226,8 @@ aide = function(gtf_path, bam_path, fasta_path, out_dir, readLen, strandmode = 0
   # bamTotal = sum(count[, "nAligns"])
 
   print("estimating fragment length ...")
-  paras = get_fragment_length_dist(gene_models, rowID, num_thre = 100,
-                                   bam_path, strandmode = strandmode, quant = 0.99, ncores = ncores)
+  paras = get_fragment_length_dist(gene_models, rowID, num_thre = 10,
+                                   bam_path, strandmode = strandmode, quant = 0.99)
   cutoff = paras$cutoff
   if(is.na(cutoff[1])) {cutoff = c(readLen, 400)}
   readm = paras$mean
