@@ -5,6 +5,11 @@
 get_onetx_starts_data = function(gene_models, num_thre = 10, strandmode = 0, flag = 1,
                                  bam_path, genome, ncores){
 
+  #Add a shuffle of the gene models by default so that bias etsimation is not always biased towards the first genes from gene_models
+
+  sel = sample(1:length(gene_models), length(gene_models))
+  gene_models = gene_models[sel]
+
   if (flag > 0 ){
     sel = sample(1:length(gene_models), round(length(gene_models)/flag))
     gene_models = gene_models[sel]
@@ -17,42 +22,44 @@ get_onetx_starts_data = function(gene_models, num_thre = 10, strandmode = 0, fla
                           id = integer())
 
   for (ii in c(1:length(gene_models))){
+    if (nrow(reads_data) < 3500){
+      if (ii %% 50 == 0) gc()
+      if (ii %% 50 == 0) print(ii)
+      cgene = gene_models[[ii]]
+      genelen = sum(cgene$exonLens)
 
-    if (ii %% 50 == 0) gc()
-    if (ii %% 50 == 0) print(ii)
-    cgene = gene_models[[ii]]
-    genelen = sum(cgene$exonLens)
+      readExoncoords = get_reads(cgene, num_thre, bam_path, strandmode = strandmode)
+      if (is.null(readExoncoords)) return(NULL)
+      if (cgene$str == "+"){
+        starts = readExoncoords$starts
+      }else{
+        starts = readExoncoords$ends
+      }
+      exon_rpos = c(0,cumsum(cgene$exonLens))
+      # fraction of reads on each exon
+      readsfrac = findInterval(starts,exon_rpos+1)
+      readsfrac = sapply(1:cgene$exonNum, function(x) sum(readsfrac == x))/length(starts)
 
-    readExoncoords = get_reads(cgene, num_thre, bam_path, strandmode = strandmode)
-    if (is.null(readExoncoords)) return(NULL)
-    if (cgene$str == "+"){
-      starts = readExoncoords$starts
-    }else{
-      starts = readExoncoords$ends
+      #TODO: check if strandedness matters
+      # use exon centers to calculate relative position of exons
+      rpos = 0.5 * (cumsum(cgene$exonLens) + exon_rpos[1:cgene$exonNum]) / genelen
+
+      # GC content on each exon
+      dna = genome[[cgene$chr]]
+      gc_exon = sapply(1:cgene$exonNum, function(i){
+        start = cgene$exonStarts[i]
+        end = cgene$exonEnds[i]
+        dnaseq = dna[start:end]
+        return(letterFrequency(dnaseq, "GC", as.prob = TRUE))
+      })
+
+      reads_data_tmp = data.frame(readsfrac = readsfrac, rpos = rpos, gc = gc_exon,
+                                  exonlen = cgene$exonLens/genelen, id = ii)
+
+      reads_data = rbind(reads_data, reads_data_tmp)
+    } else {
+      break
     }
-    exon_rpos = c(0,cumsum(cgene$exonLens))
-    # fraction of reads on each exon
-    readsfrac = findInterval(starts,exon_rpos+1)
-    readsfrac = sapply(1:cgene$exonNum, function(x) sum(readsfrac == x))/length(starts)
-
-    #TODO: check if strandedness matters
-    # use exon centers to calculate relative position of exons
-    rpos = 0.5 * (cumsum(cgene$exonLens) + exon_rpos[1:cgene$exonNum]) / genelen
-
-    # GC content on each exon
-    dna = genome[[cgene$chr]]
-    gc_exon = sapply(1:cgene$exonNum, function(i){
-      start = cgene$exonStarts[i]
-      end = cgene$exonEnds[i]
-      dnaseq = dna[start:end]
-      return(letterFrequency(dnaseq, "GC", as.prob = TRUE))
-    })
-
-    reads_data_tmp = data.frame(readsfrac = readsfrac, rpos = rpos, gc = gc_exon,
-                                exonlen = cgene$exonLens/genelen, id = ii)
-
-    reads_data = rbind(reads_data, reads_data_tmp)
-
   }
 
 

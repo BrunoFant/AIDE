@@ -252,7 +252,7 @@ aide = function(gtf_path, bam_path, fasta_path, out_dir, readLen, strandmode = 0
 
   starts_data = get_onetx_starts_data(gene_models_1tx, num_thre = 20, strandmode = strandmode, flag = flag,
                                       bam_path, genome, ncores = ncores)
-  if(nrow(starts_data) < 1000){
+  if(nrow(starts_data) < 3000){
     bws = NULL
     print("not enough reads for estimation ...")
     print("skipping bias estimation ...")

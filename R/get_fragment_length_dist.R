@@ -14,13 +14,20 @@ get_fragment_length_dist = function(gene_models, rowID, num_thre = 10,
   fglens = c()
   ngenes_counting = 0
 
+  sel = sample(1:length(rowID), length(rowID))
+  rowID = rowID[sel]
+
   for (rowid in rowID){
-      cgene = gene_models[[rowid]]
-      readTxcoords = AIDE:::get_reads(cgene, num_thre = num_thre, bam_path, strandmode = strandmode)
-      if (!is.null(readTxcoords)){
-        fglen_cgene = unlist(readTxcoords$ends - readTxcoords$starts + 1)
-        fglens = append(fglens, fglen_cgene)
-        ngenes_counting = ngenes_counting + 1
+      if (length(fglens < 10000)){
+        cgene = gene_models[[rowid]]
+        readTxcoords = AIDE:::get_reads(cgene, num_thre = num_thre, bam_path, strandmode = strandmode)
+        if (!is.null(readTxcoords)){
+          fglen_cgene = unlist(readTxcoords$ends - readTxcoords$starts + 1)
+          fglens = append(fglens, fglen_cgene)
+          ngenes_counting = ngenes_counting + 1
+        }
+      } else{
+        break
       }
     }
 
