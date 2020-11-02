@@ -184,7 +184,7 @@ main_one = function(cgene, bam_path, bamTotal, readLen, strandmode){
 #' @author Jingyi Jessica Li, \email{jli@stat.ucla.edu}
 aide = function(gtf_path, bam_path, fasta_path, out_dir, readLen, strandmode = 0, genes = NULL, pval = NULL, ncores = 5,
                 mode = "regular", ne = 25, gene_model_path = NULL, flag = 0){
-  options(np.messsages = FALSE)
+  options(np.messages = FALSE)
   set.seed(1)
 
   tp_dir = paste0(out_dir, "temporary/")
