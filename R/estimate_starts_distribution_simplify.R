@@ -15,6 +15,8 @@ get_onetx_starts_data = function(gene_models, num_thre = 10, strandmode = 0, fla
     gene_models = gene_models[sel]
   }
 
+  print(gene_models)
+
   reads_data = data.frame(readsfrac = double(),
                           rpos = double(),
                           gc = double(),
