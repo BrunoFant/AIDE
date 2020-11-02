@@ -18,7 +18,7 @@ get_fragment_length_dist = function(gene_models, rowID, num_thre = 10,
   rowID = rowID[sel]
 
   for (rowid in rowID){
-      if (length(fglens < 10000)){
+      if (length(fglens) < 10000){
         cgene = gene_models[[rowid]]
         readTxcoords = AIDE:::get_reads(cgene, num_thre = num_thre, bam_path, strandmode = strandmode)
         if (!is.null(readTxcoords)){
