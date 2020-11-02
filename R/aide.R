@@ -217,8 +217,8 @@ aide = function(gtf_path, bam_path, fasta_path, out_dir, readLen, strandmode = 0
   }
 
 
-  reader = countBam(bam_path)
-  bamTotal = reader$records
+  # reader = countBam(bam_path)
+  # bamTotal = reader$records
   gc()
   # reader = bamReader(bam_path, idx=TRUE)
   # count = bamCountAll(reader,verbose=TRUE)
