@@ -184,7 +184,7 @@ main_one = function(cgene, bam_path, bamTotal, readLen, strandmode){
 #' @author Jingyi Jessica Li, \email{jli@stat.ucla.edu}
 aide = function(gtf_path, bam_path, fasta_path, out_dir, readLen, strandmode = 0, genes = NULL, pval = NULL, ncores = 5,
                 mode = "regular", ne = 25, gene_model_path = NULL, flag = 0){
-  options(np.messages = FALSE)
+  options(np.messsages = FALSE)
   set.seed(1)
 
   tp_dir = paste0(out_dir, "temporary/")
@@ -252,7 +252,7 @@ aide = function(gtf_path, bam_path, fasta_path, out_dir, readLen, strandmode = 0
 
   starts_data = get_onetx_starts_data(gene_models_1tx, num_thre = 20, strandmode = strandmode, flag = flag,
                                       bam_path, genome, ncores = ncores)
-  if(nrow(starts_data) < 1000){
+  if(nrow(starts_data) < 3000){
     bws = NULL
     print("not enough reads for estimation ...")
     print("skipping bias estimation ...")
