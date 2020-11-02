@@ -31,7 +31,9 @@ get_onetx_starts_data = function(gene_models, num_thre = 10, strandmode = 0, fla
       genelen = sum(cgene$exonLens)
 
       readExoncoords = get_reads(cgene, num_thre, bam_path, strandmode = strandmode)
-      if (is.null(readExoncoords)) return(NULL)
+      if (is.null(readExoncoords)){
+        next
+      }
       if (cgene$str == "+"){
         starts = readExoncoords$starts
       }else{
