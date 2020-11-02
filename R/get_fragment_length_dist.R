@@ -17,8 +17,6 @@ get_fragment_length_dist = function(gene_models, rowID, num_thre = 10,
   sel = sample(1:length(rowID), length(rowID))
   rowID = rowID[sel]
 
-  print(rowID)
-
   for (rowid in rowID){
       if (length(fglens) < 10000){
         cgene = gene_models[[rowid]]
