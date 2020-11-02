@@ -5,6 +5,11 @@
 get_onetx_starts_data = function(gene_models, num_thre = 10, strandmode = 0, flag = 1,
                                  bam_path, genome, ncores){
 
+  #Add a shuffle of the gene models by default so that bias etsimation is not always biased towards the first genes from gene_models
+
+  sel = sample(1:length(gene_models), length(gene_models))
+  gene_models = gene_models[sel]
+
   if (flag > 0 ){
     sel = sample(1:length(gene_models), round(length(gene_models)/flag))
     gene_models = gene_models[sel]
