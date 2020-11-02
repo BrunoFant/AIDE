@@ -9,7 +9,15 @@ get_onetx_starts_data = function(gene_models, num_thre = 10, strandmode = 0, fla
     sel = sample(1:length(gene_models), round(length(gene_models)/flag))
     gene_models = gene_models[sel]
   }
-  reads_data = mclapply(1:length(gene_models), function(ii){
+
+  reads_data = data.frame(readsfrac = double(),
+                          rpos = double(),
+                          gc = double(),
+                          exonlen = double(),
+                          id = integer())
+
+  for (ii in c(1:length(gene_models))){
+
     if (ii %% 50 == 0) gc()
     if (ii %% 50 == 0) print(ii)
     cgene = gene_models[[ii]]
@@ -27,6 +35,7 @@ get_onetx_starts_data = function(gene_models, num_thre = 10, strandmode = 0, fla
     readsfrac = findInterval(starts,exon_rpos+1)
     readsfrac = sapply(1:cgene$exonNum, function(x) sum(readsfrac == x))/length(starts)
 
+    #TODO: check if strandedness matters
     # use exon centers to calculate relative position of exons
     rpos = 0.5 * (cumsum(cgene$exonLens) + exon_rpos[1:cgene$exonNum]) / genelen
 
@@ -39,10 +48,12 @@ get_onetx_starts_data = function(gene_models, num_thre = 10, strandmode = 0, fla
       return(letterFrequency(dnaseq, "GC", as.prob = TRUE))
     })
 
-    return(data.frame(readsfrac = readsfrac, rpos = rpos, gc = gc_exon,
-                      exonlen = cgene$exonLens/genelen, id = ii))
-  }, mc.cores = ncores)
-  reads_data = Reduce(rbind, reads_data)
+    reads_data_tmp = data.frame(readsfrac = readsfrac, rpos = rpos, gc = gc_exon,
+                                exonlen = cgene$exonLens/genelen, id = ii)
+
+    reads_data = rbind(reads_data, reads_data_tmp)
+
+  }
 
 
   return(reads_data)

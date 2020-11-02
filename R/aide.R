@@ -226,7 +226,7 @@ aide = function(gtf_path, bam_path, fasta_path, out_dir, readLen, strandmode = 0
   # bamTotal = sum(count[, "nAligns"])
 
   print("estimating fragment length ...")
-  paras = get_fragment_length_dist(gene_models, rowID, num_thre = 10,
+  paras = get_fragment_length_dist(gene_models, rowID, num_thre = 100,
                                    bam_path, strandmode = strandmode, quant = 0.99)
   cutoff = paras$cutoff
   if(is.na(cutoff[1])) {cutoff = c(readLen, 400)}
@@ -252,7 +252,7 @@ aide = function(gtf_path, bam_path, fasta_path, out_dir, readLen, strandmode = 0
 
   starts_data = get_onetx_starts_data(gene_models_1tx, num_thre = 20, strandmode = strandmode, flag = flag,
                                       bam_path, genome, ncores = ncores)
-  if(nrow(starts_data) < 1500 *2){
+  if(nrow(starts_data) < 1000){
     bws = NULL
     print("not enough reads for estimation ...")
     print("skipping bias estimation ...")
